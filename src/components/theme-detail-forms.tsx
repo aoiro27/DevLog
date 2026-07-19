@@ -197,14 +197,14 @@ export function ThemeMetaForm({
         </select>
       </label>
       <p className="md-hint">
-        完了にすると、内容を今日のログへ書き出します。
+        完了にすると、内容をログに残します。
       </p>
       {error ? <p className="form-error">{error}</p> : null}
       {success ? <p className="form-success">{success}</p> : null}
       {linkedToday ? (
         <p className="md-hint">
           <Link href="/today" className="topic-tag">
-            今日のログを見る
+            ログを残すへ
           </Link>
         </p>
       ) : null}

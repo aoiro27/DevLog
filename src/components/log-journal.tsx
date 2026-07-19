@@ -96,7 +96,7 @@ export function LogJournal() {
 
   return (
     <main className="page-log">
-      <h1 className="page-heading">履歴</h1>
+      <h1 className="page-heading">これまでのログ</h1>
 
       {loading ? (
         <p className="empty-state">読み込み中…</p>
@@ -115,16 +115,16 @@ export function LogJournal() {
           </div>
 
           <section className="panel panel-log-entries" style={{ marginTop: "1.1rem" }}>
-            <h2 className="section-title">
-              {isFiltering ? "検索結果" : "すべての記録"}
-            </h2>
+                <h2 className="section-title">
+                  {isFiltering ? "検索結果" : "一覧"}
+                </h2>
             <EntryList
               entries={entries as Entry[]}
               activeTag={tag || undefined}
               emptyMessage={
                 isFiltering
-                  ? "条件に合う記録がありません。"
-                  : "まだ記録がありません。"
+                  ? "条件に合うログがありません。"
+                  : "まだログがありません。"
               }
               onDeleted={(id) => {
                 setEntries((prev) => prev.filter((e) => e.id !== id));

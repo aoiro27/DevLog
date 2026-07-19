@@ -10,7 +10,7 @@ import { MarkdownView } from "@/components/markdown-view";
 
 export function EntryList({
   entries,
-  emptyMessage = "まだ記録がありません。",
+  emptyMessage = "まだログがありません。",
   activeTag,
   onDeleted,
   defaultExpanded = false,

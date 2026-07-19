@@ -43,7 +43,7 @@ export function TodayJournal() {
 
   return (
     <main>
-      <h1 className="page-heading">今日のログ</h1>
+      <h1 className="page-heading">ログを残す</h1>
       <p className="page-sub">{formatJapaneseDate(today)}</p>
 
       {loading ? (
@@ -54,7 +54,7 @@ export function TodayJournal() {
 
           <div className="two-col" style={{ marginTop: "1.1rem" }}>
             <section className="panel">
-              <h2 className="section-title">書く</h2>
+              <h2 className="section-title">新規</h2>
               <EntryForm
                 onCreated={(entry) => {
                   setTodays((prev) => [entry, ...prev]);
@@ -71,11 +71,11 @@ export function TodayJournal() {
           </div>
 
           <section className="panel" style={{ marginTop: "1.1rem" }}>
-            <h2 className="section-title">今日の記録</h2>
+            <h2 className="section-title">今日のログ</h2>
             <EntryList
               entries={todays}
               defaultExpanded
-              emptyMessage="今日の記録はまだありません。"
+              emptyMessage="まだありません。"
               onDeleted={(id) => {
                 setTodays((prev) => {
                   const next = prev.filter((e) => e.id !== id);

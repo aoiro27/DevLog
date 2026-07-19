@@ -9,13 +9,13 @@ export function AppNav({ email }: { email?: string | null }) {
       </Link>
       <nav className="app-nav-links">
         <Link href="/today" prefetch>
-          今日
+          ログを残す
         </Link>
         <Link href="/log" prefetch>
-          履歴
+          これまでのログ
         </Link>
         <Link href="/themes" prefetch>
-          調査
+          調べてるやつ
         </Link>
       </nav>
       <div className="app-nav-end">

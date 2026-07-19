@@ -36,7 +36,7 @@ export function ThemesBrowser() {
 
   return (
     <main>
-      <h1 className="page-heading">調査テーマ</h1>
+      <h1 className="page-heading">調べてるやつ</h1>
 
       <div className="two-col">
         <section className="panel">

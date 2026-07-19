@@ -81,7 +81,7 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
   return (
     <main>
       <p className="breadcrumb">
-        <Link href="/themes">調査テーマ</Link>
+        <Link href="/themes">調べてるやつ</Link>
         <span aria-hidden> / </span>
         <span>{theme.title}</span>
       </p>
