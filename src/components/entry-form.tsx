@@ -1,37 +1,100 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
-import { createEntry } from "@/app/actions/entries";
-import type { ActionState } from "@/app/actions/auth";
+import { useState, useTransition } from "react";
+import { todayInTokyo } from "@/lib/date";
+import { parseTags } from "@/lib/tags";
+import { createClient } from "@/lib/supabase/client";
 import { MarkdownEditor } from "@/components/markdown-editor";
+import type { Entry } from "@/lib/types";
 
-const initial: ActionState = {};
 const SOFT_LIMIT = 800;
 const HARD_LIMIT = 50000;
 
-export function EntryForm() {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [state, formAction, pending] = useActionState(createEntry, initial);
-  const formRef = useRef<HTMLFormElement>(null);
+type Props = {
+  onCreated?: (entry: Entry) => void;
+};
 
-  useEffect(() => {
-    if (state.success) {
-      setTitle("");
-      setBody("");
-      formRef.current?.reset();
-    }
-  }, [state.success]);
+export function EntryForm({ onCreated }: Props) {
+  const [title, setTitle] = useState("");
+  const [tags, setTags] = useState("");
+  const [body, setBody] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   const overSoft = body.length > SOFT_LIMIT;
 
   return (
-    <form ref={formRef} action={formAction} className="entry-form">
+    <form
+      className="entry-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
+
+        const nextTitle = title.trim();
+        const nextBody = body.trim();
+        const nextTags = parseTags(tags);
+
+        if (!nextTitle) {
+          setError("タイトルを入力してください。");
+          return;
+        }
+        if (!nextBody) {
+          setError("本文を1文字以上書いてください。");
+          return;
+        }
+        if (nextBody.length > HARD_LIMIT) {
+          setError(`${HARD_LIMIT}文字以内にしてください。`);
+          return;
+        }
+
+        startTransition(async () => {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+
+          if (!user) {
+            setError("ログインが必要です。");
+            return;
+          }
+
+          const payload = {
+            user_id: user.id,
+            title: nextTitle,
+            body: nextBody,
+            tags: nextTags,
+            logged_on: todayInTokyo(),
+          };
+
+          const { data, error: insertError } = await supabase
+            .from("entries")
+            .insert(payload)
+            .select("*")
+            .single();
+
+          if (insertError || !data) {
+            setError(insertError?.message ?? "保存に失敗しました。");
+            return;
+          }
+
+          setTitle("");
+          setTags("");
+          setBody("");
+          setSuccess(
+            nextBody.length <= SOFT_LIMIT
+              ? "残しました。また明日も小さく。"
+              : "残しました。長くても大丈夫、続ければ資産になる。",
+          );
+          onCreated?.(data as Entry);
+        });
+      }}
+    >
       <label className="field">
         <span>タイトル</span>
         <input
           type="text"
-          name="title"
           required
           maxLength={120}
           value={title}
@@ -44,15 +107,16 @@ export function EntryForm() {
         <span>タグ（任意・カンマ区切り）</span>
         <input
           type="text"
-          name="tags"
           maxLength={200}
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
           placeholder="例: React, Hooks, 詰まったこと"
         />
       </label>
 
       <div className="field">
         <span>本文</span>
-        <MarkdownEditor value={body} onChange={setBody} />
+        <MarkdownEditor value={body} onChange={setBody} name="body-editor" />
       </div>
 
       <div className="entry-meta">
@@ -69,8 +133,8 @@ export function EntryForm() {
         </button>
       </div>
 
-      {state.error ? <p className="form-error">{state.error}</p> : null}
-      {state.success ? <p className="form-success">{state.success}</p> : null}
+      {error ? <p className="form-error">{error}</p> : null}
+      {success ? <p className="form-success">{success}</p> : null}
     </form>
   );
 }

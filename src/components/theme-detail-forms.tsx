@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState, useTransition } from "react";
 import {
   createThemeNode,
@@ -7,12 +8,14 @@ import {
   deleteThemeNode,
   updateTheme,
   updateThemeNode,
+  type CreateNodeState,
 } from "@/app/actions/themes";
 import type { ActionState } from "@/app/actions/auth";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import type { Theme, ThemeNode } from "@/lib/types";
 
 const initial: ActionState = {};
+const createInitial: CreateNodeState = {};
 
 export function ThemeMetaForm({ theme }: { theme: Theme }) {
   const [state, formAction, pending] = useActionState(updateTheme, initial);
@@ -88,8 +91,19 @@ export function NodeCreateForm({
   parentId?: string | null;
   parentTitle?: string;
 }) {
+  const router = useRouter();
   const [body, setBody] = useState("");
-  const [state, formAction, pending] = useActionState(createThemeNode, initial);
+  const [state, formAction, pending] = useActionState(
+    createThemeNode,
+    createInitial,
+  );
+
+  useEffect(() => {
+    if (state.success && state.id) {
+      router.replace(`/themes/${themeId}?node=${state.id}`);
+      router.refresh();
+    }
+  }, [state, themeId, router]);
 
   return (
     <form action={formAction} className="entry-form">
@@ -131,6 +145,7 @@ export function NodeEditor({
   themeId: string;
   node: ThemeNode;
 }) {
+  const router = useRouter();
   const [title, setTitle] = useState(node.title);
   const [body, setBody] = useState(node.body);
   const [state, formAction, pending] = useActionState(updateThemeNode, initial);
@@ -176,7 +191,11 @@ export function NodeEditor({
               return;
             }
             startDelete(async () => {
-              await deleteThemeNode(node.id, themeId);
+              const result = await deleteThemeNode(node.id, themeId);
+              if (!result.error) {
+                router.replace(`/themes/${themeId}`);
+                router.refresh();
+              }
             });
           }}
         >

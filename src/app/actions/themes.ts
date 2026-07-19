@@ -18,11 +18,6 @@ async function requireUser() {
   return { supabase, user };
 }
 
-function revalidateTheme(themeId?: string) {
-  revalidatePath("/themes");
-  if (themeId) revalidatePath(`/themes/${themeId}`);
-}
-
 export async function createTheme(
   _prev: ActionState,
   formData: FormData,
@@ -53,7 +48,7 @@ export async function createTheme(
 
   if (error) return { error: error.message };
 
-  revalidateTheme(data.id);
+  revalidatePath("/themes");
   redirect(`/themes/${data.id}`);
 }
 
@@ -89,7 +84,6 @@ export async function updateTheme(
 
   if (error) return { error: error.message };
 
-  revalidateTheme(id);
   return { success: "テーマを更新しました。" };
 }
 
@@ -109,10 +103,12 @@ export async function deleteTheme(id: string): Promise<ActionState> {
   redirect("/themes");
 }
 
+export type CreateNodeState = ActionState & { id?: string };
+
 export async function createThemeNode(
-  _prev: ActionState,
+  _prev: CreateNodeState,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<CreateNodeState> {
   const themeId = String(formData.get("theme_id") ?? "");
   const parentIdRaw = String(formData.get("parent_id") ?? "").trim();
   const parentId = parentIdRaw.length > 0 ? parentIdRaw : null;
@@ -131,30 +127,7 @@ export async function createThemeNode(
   const { supabase, user } = await requireUser();
   if (!user) return { error: "ログインが必要です。" };
 
-  const { data: theme } = await supabase
-    .from("themes")
-    .select("id")
-    .eq("id", themeId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (!theme) return { error: "テーマが見つかりません。" };
-
-  let siblingQuery = supabase
-    .from("theme_nodes")
-    .select("sort_order")
-    .eq("theme_id", themeId)
-    .eq("user_id", user.id)
-    .order("sort_order", { ascending: false })
-    .limit(1);
-
-  siblingQuery = parentId
-    ? siblingQuery.eq("parent_id", parentId)
-    : siblingQuery.is("parent_id", null);
-
-  const { data: siblings } = await siblingQuery;
-
-  const sortOrder = (siblings?.[0]?.sort_order ?? -1) + 1;
+  const sortOrder = Date.now() % 1000000;
 
   const { data, error } = await supabase
     .from("theme_nodes")
@@ -171,8 +144,7 @@ export async function createThemeNode(
 
   if (error) return { error: error.message };
 
-  revalidateTheme(themeId);
-  redirect(`/themes/${themeId}?node=${data.id}`);
+  return { success: "追加しました。", id: data.id };
 }
 
 export async function updateThemeNode(
@@ -205,7 +177,6 @@ export async function updateThemeNode(
 
   if (error) return { error: error.message };
 
-  revalidateTheme(themeId);
   return { success: "調査メモを保存しました。" };
 }
 
@@ -225,6 +196,6 @@ export async function deleteThemeNode(
 
   if (error) return { error: error.message };
 
-  revalidateTheme(themeId);
-  redirect(`/themes/${themeId}`);
+  revalidatePath(`/themes/${themeId}`);
+  return { success: "削除しました。" };
 }
