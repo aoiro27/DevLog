@@ -5,8 +5,8 @@ import { todayInTokyo } from "@/lib/date";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionState } from "@/app/actions/auth";
 
-const MAX_BODY = 1000;
-const SUGGESTED_BODY = 400;
+const MAX_BODY = 50000;
+const SUGGESTED_BODY = 800;
 
 export async function createEntry(
   _prev: ActionState,

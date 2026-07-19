@@ -1,6 +1,7 @@
 import { formatJapaneseDate, formatShortTime } from "@/lib/date";
 import type { Entry } from "@/lib/types";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
+import { MarkdownView } from "@/components/markdown-view";
 
 export function EntryList({
   entries,
@@ -39,7 +40,7 @@ export function EntryList({
                   </div>
                   <DeleteEntryButton id={entry.id} />
                 </div>
-                <p className="entry-body">{entry.body}</p>
+                <MarkdownView content={entry.body} />
               </li>
             ))}
           </ul>

@@ -3,10 +3,11 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { createEntry } from "@/app/actions/entries";
 import type { ActionState } from "@/app/actions/auth";
+import { MarkdownEditor } from "@/components/markdown-editor";
 
 const initial: ActionState = {};
-const SOFT_LIMIT = 400;
-const HARD_LIMIT = 1000;
+const SOFT_LIMIT = 800;
+const HARD_LIMIT = 50000;
 
 export function EntryForm() {
   const [body, setBody] = useState("");
@@ -34,25 +35,21 @@ export function EntryForm() {
         />
       </label>
 
-      <label className="field">
+      <div className="field">
         <span>今日の小さな学び</span>
-        <textarea
-          name="body"
-          required
-          rows={7}
-          maxLength={HARD_LIMIT}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="今日触ったこと、詰まったこと、分かったことを短く。"
-        />
-      </label>
+        <MarkdownEditor value={body} onChange={setBody} />
+      </div>
 
       <div className="entry-meta">
         <span className={overSoft ? "char-count is-soft" : "char-count"}>
           {body.length} / {HARD_LIMIT}
-          {overSoft ? " · 長くてもOK、続きやすさ優先" : " · 目安 400 字以内"}
+          {overSoft ? " · 長くてもOK" : " · 目安は短めで十分"}
         </span>
-        <button type="submit" className="btn-primary" disabled={pending}>
+        <button
+          type="submit"
+          className="btn-primary"
+          disabled={pending || !body.trim()}
+        >
           {pending ? "保存中…" : "今日の分を残す"}
         </button>
       </div>

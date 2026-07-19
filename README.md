@@ -7,7 +7,7 @@
 ## できること
 
 - メール／パスワードでの認証（Supabase Auth）
-- 今日の小さな学びを投稿（目安 400 字、上限 1000 字）
+- 今日の学びを **Markdown** で投稿（画像のペースト／ドロップ対応）
 - 任意のトピックタグ
 - 連続日数・最長・累計日数
 - 今月の記録ヒートマップ
@@ -18,17 +18,19 @@
 | 層 | 技術 |
 | --- | --- |
 | Frontend | Next.js (App Router) + TypeScript + Tailwind CSS |
-| Backend | Supabase（Auth / Postgres / RLS） |
+| Backend | Supabase（Auth / Postgres / Storage / RLS） |
 | 日付基準 | Asia/Tokyo |
 
-> Supabase は Auth と DB のデプロイ先です。フロントエンドは Vercel などへデプロイし、Supabase に接続する構成を想定しています。
+> Supabase は Auth・DB・画像 Storage のデプロイ先です。フロントエンドは Vercel などへデプロイし、Supabase に接続する構成を想定しています。
 
 ## セットアップ
 
 ### 1. Supabase プロジェクト
 
 1. [Supabase](https://supabase.com/) でプロジェクトを作成
-2. **SQL Editor** で `supabase/migrations/20260719000000_init.sql` を実行
+2. **SQL Editor** で次を順番に実行
+   - `supabase/migrations/20260719000000_init.sql`
+   - `supabase/migrations/20260719000001_markdown_storage.sql`
 3. **Project Settings → API** から URL と `anon` key を控える
 4. （個人利用向け）**Authentication → Providers → Email** で Confirm email をオフにすると、登録直後にログインできます
 
