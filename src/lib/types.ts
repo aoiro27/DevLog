@@ -7,6 +7,7 @@ export type Entry = {
   logged_on: string;
   created_at: string;
   updated_at: string;
+  source_theme_id?: string | null;
 };
 
 export type StreakStats = {

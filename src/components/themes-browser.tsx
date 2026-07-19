@@ -69,7 +69,7 @@ export function ThemesBrowser() {
                     className="section-title"
                     style={{ marginTop: "1.25rem" }}
                   >
-                    一段落（{doneThemes.length}）
+                    完了（{doneThemes.length}）
                   </h2>
                   <ThemeList themes={doneThemes} />
                 </>
@@ -103,7 +103,7 @@ function ThemeList({
               <span className="theme-card-summary">{theme.summary}</span>
             ) : null}
             <span className="theme-card-meta">
-              {theme.status === "open" ? "調査中" : "一段落"}
+              {theme.status === "open" ? "調査中" : "完了"}
             </span>
           </Link>
         </li>

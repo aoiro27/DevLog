@@ -87,7 +87,7 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
       </p>
       <h1 className="page-heading">{theme.title}</h1>
       <p className="page-sub">
-        {theme.status === "open" ? "調査中" : "一段落"} · ノード{" "}
+        {theme.status === "open" ? "調査中" : "完了"} · ノード{" "}
         {countNodes(tree)} 件
       </p>
 
@@ -193,6 +193,7 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
               <h2 className="section-title">テーマ設定</h2>
               <ThemeMetaForm
                 theme={theme}
+                tree={tree}
                 onUpdated={(next) => setTheme(next)}
               />
               {nodes.length === 0 ? (

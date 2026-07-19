@@ -1,16 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { todayInTokyo } from "@/lib/date";
 import { createClient } from "@/lib/supabase/client";
+import { themeToLogMarkdown } from "@/lib/theme-to-log";
 import { MarkdownEditor } from "@/components/markdown-editor";
-import type { Theme, ThemeNode } from "@/lib/types";
+import type { Theme, ThemeNode, ThemeNodeTree } from "@/lib/types";
 
 export function ThemeMetaForm({
   theme,
+  tree,
   onUpdated,
 }: {
   theme: Theme;
+  tree: ThemeNodeTree[];
   onUpdated?: (theme: Theme) => void;
 }) {
   const router = useRouter();
@@ -19,6 +24,7 @@ export function ThemeMetaForm({
   const [status, setStatus] = useState(theme.status);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [linkedToday, setLinkedToday] = useState(false);
   const [pending, startTransition] = useTransition();
   const [deleting, startDelete] = useTransition();
 
@@ -26,6 +32,7 @@ export function ThemeMetaForm({
     setTitle(theme.title);
     setSummary(theme.summary);
     setStatus(theme.status);
+    setLinkedToday(false);
   }, [theme.id, theme.title, theme.summary, theme.status]);
 
   return (
@@ -35,14 +42,28 @@ export function ThemeMetaForm({
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        setLinkedToday(false);
+
         const nextTitle = title.trim();
         if (!nextTitle) {
           setError("テーマ名を入力してください。");
           return;
         }
 
+        const becomingComplete =
+          theme.status !== "done" && status === "done";
+
         startTransition(async () => {
           const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+
+          if (!user) {
+            setError("ログインが必要です。");
+            return;
+          }
+
           const { data, error: updateError } = await supabase
             .from("themes")
             .update({
@@ -58,8 +79,92 @@ export function ThemeMetaForm({
             setError(updateError?.message ?? "更新に失敗しました。");
             return;
           }
-          setSuccess("テーマを更新しました。");
-          onUpdated?.(data as Theme);
+
+          const updated = data as Theme;
+          onUpdated?.(updated);
+
+          if (!becomingComplete) {
+            setSuccess("テーマを更新しました。");
+            return;
+          }
+
+          // すでにこのテーマから作ったログがあれば再利用（重複防止）
+          const { data: existing } = await supabase
+            .from("entries")
+            .select("id")
+            .eq("source_theme_id", theme.id)
+            .maybeSingle();
+
+          const body = themeToLogMarkdown(
+            { ...updated, title: nextTitle, summary: summary.trim() },
+            tree,
+          );
+          const entryTitle = `調査完了: ${nextTitle}`.slice(0, 120);
+          const tags = ["調査完了"];
+
+          if (existing?.id) {
+            const { error: entryError } = await supabase
+              .from("entries")
+              .update({
+                title: entryTitle,
+                body,
+                tags,
+                logged_on: todayInTokyo(),
+              })
+              .eq("id", existing.id);
+
+            if (entryError) {
+              setError(
+                `完了にはしましたが、ログ更新に失敗しました: ${entryError.message}`,
+              );
+              return;
+            }
+            setSuccess("完了にし、既存の連携ログを今日の内容で更新しました。");
+            setLinkedToday(true);
+            return;
+          }
+
+          const { error: insertError } = await supabase.from("entries").insert({
+            user_id: user.id,
+            title: entryTitle,
+            body,
+            tags,
+            logged_on: todayInTokyo(),
+            source_theme_id: theme.id,
+          });
+
+          if (insertError) {
+            // マイグレーション未適用時は source_theme_id なしで再試行
+            if (insertError.message.includes("source_theme_id")) {
+              const { error: fallbackError } = await supabase
+                .from("entries")
+                .insert({
+                  user_id: user.id,
+                  title: entryTitle,
+                  body,
+                  tags,
+                  logged_on: todayInTokyo(),
+                });
+              if (fallbackError) {
+                setError(
+                  `完了にはしましたが、ログ作成に失敗しました: ${fallbackError.message}`,
+                );
+                return;
+              }
+              setSuccess(
+                "完了にし、今日のログへ統合しました。（連携用カラム未作成のため重複防止は未設定）",
+              );
+              setLinkedToday(true);
+              return;
+            }
+            setError(
+              `完了にはしましたが、ログ作成に失敗しました: ${insertError.message}`,
+            );
+            return;
+          }
+
+          setSuccess("完了にし、今日のログへ調査内容を統合しました。");
+          setLinkedToday(true);
         });
       }}
     >
@@ -90,11 +195,21 @@ export function ThemeMetaForm({
           onChange={(e) => setStatus(e.target.value as Theme["status"])}
         >
           <option value="open">調査中</option>
-          <option value="done">一段落</option>
+          <option value="done">完了</option>
         </select>
       </label>
+      <p className="md-hint">
+        「完了」にすると、テーマ概要とツリーの調査メモをまとめて今日のログに1件作成します。
+      </p>
       {error ? <p className="form-error">{error}</p> : null}
       {success ? <p className="form-success">{success}</p> : null}
+      {linkedToday ? (
+        <p className="md-hint">
+          <Link href="/today" className="topic-tag">
+            今日のログを見る
+          </Link>
+        </p>
+      ) : null}
       <div className="entry-meta">
         <button
           type="button"
@@ -119,7 +234,11 @@ export function ThemeMetaForm({
           {deleting ? "削除中…" : "テーマを削除"}
         </button>
         <button type="submit" className="btn-primary" disabled={pending}>
-          {pending ? "保存中…" : "テーマを保存"}
+          {pending
+            ? "保存中…"
+            : status === "done" && theme.status !== "done"
+              ? "完了にしてログへ統合"
+              : "テーマを保存"}
         </button>
       </div>
     </form>
