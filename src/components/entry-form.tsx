@@ -10,12 +10,14 @@ const SOFT_LIMIT = 800;
 const HARD_LIMIT = 50000;
 
 export function EntryForm() {
+  const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [state, formAction, pending] = useActionState(createEntry, initial);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state.success) {
+      setTitle("");
       setBody("");
       formRef.current?.reset();
     }
@@ -26,17 +28,30 @@ export function EntryForm() {
   return (
     <form ref={formRef} action={formAction} className="entry-form">
       <label className="field">
-        <span>トピック（任意）</span>
+        <span>タイトル</span>
         <input
           type="text"
-          name="topic"
-          maxLength={40}
-          placeholder="例: React / SQL / 設計"
+          name="title"
+          required
+          maxLength={120}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="例: useEffect の依存配列でハマった"
+        />
+      </label>
+
+      <label className="field">
+        <span>タグ（任意・カンマ区切り）</span>
+        <input
+          type="text"
+          name="tags"
+          maxLength={200}
+          placeholder="例: React, Hooks, 詰まったこと"
         />
       </label>
 
       <div className="field">
-        <span>今日の小さな学び</span>
+        <span>本文</span>
         <MarkdownEditor value={body} onChange={setBody} />
       </div>
 
@@ -48,7 +63,7 @@ export function EntryForm() {
         <button
           type="submit"
           className="btn-primary"
-          disabled={pending || !body.trim()}
+          disabled={pending || !title.trim() || !body.trim()}
         >
           {pending ? "保存中…" : "今日の分を残す"}
         </button>

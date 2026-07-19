@@ -8,7 +8,8 @@
 
 - メール／パスワードでの認証（Supabase Auth）
 - 今日の学びを **Markdown** で投稿（画像のペースト／ドロップ対応）
-- 任意のトピックタグ
+- タイトル・タグ付きで記録
+- タイトル / 本文 / タグでの検索・タグ絞り込み
 - 連続日数・最長・累計日数
 - 今月の記録ヒートマップ
 - 日付ごとの履歴
@@ -31,6 +32,7 @@
 2. **SQL Editor** で次を順番に実行
    - `supabase/migrations/20260719000000_init.sql`
    - `supabase/migrations/20260719000001_markdown_storage.sql`
+   - `supabase/migrations/20260719000002_search.sql`
 3. **Project Settings → API** から URL と `anon` key を控える
 4. （個人利用向け）**Authentication → Providers → Email** で Confirm email をオフにすると、登録直後にログインできます
 

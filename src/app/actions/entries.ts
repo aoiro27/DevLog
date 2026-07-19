@@ -2,22 +2,30 @@
 
 import { revalidatePath } from "next/cache";
 import { todayInTokyo } from "@/lib/date";
+import { parseTags } from "@/lib/tags";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionState } from "@/app/actions/auth";
 
 const MAX_BODY = 50000;
+const MAX_TITLE = 120;
 const SUGGESTED_BODY = 800;
 
 export async function createEntry(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const title = String(formData.get("title") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
-  const topicRaw = String(formData.get("topic") ?? "").trim();
-  const topic = topicRaw.length > 0 ? topicRaw.slice(0, 40) : null;
+  const tags = parseTags(String(formData.get("tags") ?? ""));
 
+  if (title.length < 1) {
+    return { error: "タイトルを入力してください。" };
+  }
+  if (title.length > MAX_TITLE) {
+    return { error: `タイトルは${MAX_TITLE}文字以内にしてください。` };
+  }
   if (body.length < 1) {
-    return { error: "今日の学びを1文字以上書いてください。" };
+    return { error: "本文を1文字以上書いてください。" };
   }
   if (body.length > MAX_BODY) {
     return { error: `${MAX_BODY}文字以内にしてください。` };
@@ -34,8 +42,9 @@ export async function createEntry(
 
   const { error } = await supabase.from("entries").insert({
     user_id: user.id,
+    title,
     body,
-    topic,
+    tags,
     logged_on: todayInTokyo(),
   });
 

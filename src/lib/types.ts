@@ -1,8 +1,9 @@
 export type Entry = {
   id: string;
   user_id: string;
+  title: string;
   body: string;
-  topic: string | null;
+  tags: string[];
   logged_on: string;
   created_at: string;
   updated_at: string;
