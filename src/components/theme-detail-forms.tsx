@@ -119,7 +119,7 @@ export function ThemeMetaForm({
               );
               return;
             }
-            setSuccess("完了にし、既存の連携ログを今日の内容で更新しました。");
+            setSuccess("保存しました。ログを更新しました。");
             setLinkedToday(true);
             return;
           }
@@ -147,23 +147,21 @@ export function ThemeMetaForm({
                 });
               if (fallbackError) {
                 setError(
-                  `完了にはしましたが、ログ作成に失敗しました: ${fallbackError.message}`,
+                  `完了しましたが、ログ作成に失敗しました: ${fallbackError.message}`,
                 );
                 return;
               }
-              setSuccess(
-                "完了にし、今日のログへ統合しました。（連携用カラム未作成のため重複防止は未設定）",
-              );
+              setSuccess("保存しました。ログを作成しました。");
               setLinkedToday(true);
               return;
             }
             setError(
-              `完了にはしましたが、ログ作成に失敗しました: ${insertError.message}`,
+              `完了しましたが、ログ作成に失敗しました: ${insertError.message}`,
             );
             return;
           }
 
-          setSuccess("完了にし、今日のログへ調査内容を統合しました。");
+          setSuccess("保存しました。ログを作成しました。");
           setLinkedToday(true);
         });
       }}
@@ -199,7 +197,7 @@ export function ThemeMetaForm({
         </select>
       </label>
       <p className="md-hint">
-        「完了」にすると、テーマ概要とツリーの調査メモをまとめて今日のログに1件作成します。
+        完了にすると、内容を今日のログへ書き出します。
       </p>
       {error ? <p className="form-error">{error}</p> : null}
       {success ? <p className="form-success">{success}</p> : null}
@@ -237,8 +235,8 @@ export function ThemeMetaForm({
           {pending
             ? "保存中…"
             : status === "done" && theme.status !== "done"
-              ? "完了にしてログへ統合"
-              : "テーマを保存"}
+              ? "完了して保存"
+              : "保存"}
         </button>
       </div>
     </form>

@@ -37,9 +37,6 @@ export function ThemesBrowser() {
   return (
     <main>
       <h1 className="page-heading">調査テーマ</h1>
-      <p className="page-sub">
-        調べたいことを登録し、結果をツリーで積み上げる
-      </p>
 
       <div className="two-col">
         <section className="panel">

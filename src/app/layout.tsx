@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fredoka, Zen_Maru_Gothic } from "next/font/google";
+import { Fredoka, M_PLUS_Rounded_1c } from "next/font/google";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -8,16 +8,15 @@ const fredoka = Fredoka({
   weight: ["400", "500", "600", "700"],
 });
 
-const zenMaru = Zen_Maru_Gothic({
+const mplus = M_PLUS_Rounded_1c({
   variable: "--font-zen",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "DevLog — 毎日の小さな技術ログ",
-  description:
-    "完璧を目指さず、毎日少しずつ技術の学びを残す。続くためのマイクロアウトプット。",
+  title: "DevLog",
+  description: "DevLog",
 };
 
 export default function RootLayout({
@@ -26,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${fredoka.variable} ${zenMaru.variable} h-full`}>
+    <html lang="ja" className={`${fredoka.variable} ${mplus.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">{children}</body>
     </html>
   );

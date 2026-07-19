@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { AuthForm } from "@/components/auth-form";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -9,7 +9,6 @@ export default function LoginPage() {
           DevLog
         </Link>
         <h1>ログイン</h1>
-        <p>戻ってきたら、続きの1行を残しましょう。</p>
         <AuthForm />
       </div>
     </main>

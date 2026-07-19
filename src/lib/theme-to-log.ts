@@ -5,17 +5,13 @@ export function themeToLogMarkdown(
   theme: Theme,
   tree: ThemeNodeTree[],
 ): string {
-  const lines: string[] = [
-    `> 調査テーマ「${theme.title}」を完了した記録`,
-    "",
-  ];
+  const lines: string[] = [];
 
   if (theme.summary.trim()) {
     lines.push("## 概要", "", theme.summary.trim(), "");
   }
 
   if (tree.length === 0) {
-    lines.push("_調査ノードはまだありませんでした。_");
     return lines.join("\n").trim();
   }
 

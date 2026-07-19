@@ -97,7 +97,6 @@ export function LogJournal() {
   return (
     <main>
       <h1 className="page-heading">履歴</h1>
-      <p className="page-sub">タイトル・本文・タグから振り返る</p>
 
       {loading ? (
         <p className="empty-state">読み込み中…</p>

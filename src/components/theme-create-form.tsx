@@ -71,7 +71,7 @@ export function ThemeCreateForm({ onCreated }: { onCreated?: () => void }) {
           maxLength={2000}
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
-          placeholder="なぜ調べたいか、分かっている範囲を短く。"
+          placeholder="概要"
         />
       </label>
       {error ? <p className="form-error">{error}</p> : null}

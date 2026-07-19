@@ -44,9 +44,7 @@ export function TodayJournal() {
   return (
     <main>
       <h1 className="page-heading">今日のログ</h1>
-      <p className="page-sub">
-        {formatJapaneseDate(today)} · 小さくていいから残す
-      </p>
+      <p className="page-sub">{formatJapaneseDate(today)}</p>
 
       {loading ? (
         <p className="empty-state">読み込み中…</p>
@@ -77,7 +75,7 @@ export function TodayJournal() {
             <EntryList
               entries={todays}
               defaultExpanded
-              emptyMessage="まだ今日の記録はありません。上の欄に1行書いてみましょう。"
+              emptyMessage="今日の記録はまだありません。"
               onDeleted={(id) => {
                 setTodays((prev) => {
                   const next = prev.filter((e) => e.id !== id);

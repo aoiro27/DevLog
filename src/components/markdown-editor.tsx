@@ -207,10 +207,7 @@ export function MarkdownEditor({
           onPaste={onPaste}
           onDrop={onDrop}
           onDragOver={(e) => e.preventDefault()}
-          placeholder={
-            placeholder ??
-            "Markdown で書けます。画像はペーストまたはドロップで挿入。"
-          }
+          placeholder={placeholder ?? "本文"}
           className="md-textarea"
         />
       ) : (
@@ -219,10 +216,7 @@ export function MarkdownEditor({
         </div>
       )}
 
-      <p className="md-hint">
-        Markdown 対応 · クリップボードの画像をそのまま貼り付け可
-        {uploading ? " · 画像をアップロード中…" : ""}
-      </p>
+      {uploading ? <p className="md-hint">画像をアップロード中…</p> : null}
       {uploadError ? <p className="form-error">{uploadError}</p> : null}
     </div>
   );

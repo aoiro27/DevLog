@@ -8,7 +8,6 @@ import type { ActionState } from "@/app/actions/auth";
 
 const MAX_BODY = 50000;
 const MAX_TITLE = 120;
-const SUGGESTED_BODY = 800;
 
 export async function createEntry(
   _prev: ActionState,
@@ -54,12 +53,7 @@ export async function createEntry(
 
   revalidatePath("/today");
   revalidatePath("/log");
-  return {
-    success:
-      body.length <= SUGGESTED_BODY
-        ? "残しました。また明日も小さく。"
-        : "残しました。長くても大丈夫、続ければ資産になる。",
-  };
+  return { success: "保存しました。" };
 }
 
 export async function deleteEntry(id: string): Promise<ActionState> {

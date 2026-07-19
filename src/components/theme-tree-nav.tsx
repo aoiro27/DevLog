@@ -74,9 +74,7 @@ export function ThemeTreeNav({ tree, selectedId, onSelect }: Props) {
 
   if (empty) {
     return (
-      <p className="empty-state">
-        まだ調査メモがありません。右のフォームから最初のノードを追加してください。
-      </p>
+      <p className="empty-state">ノードがありません。</p>
     );
   }
 

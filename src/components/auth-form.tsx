@@ -36,13 +36,9 @@ export function AuthForm() {
         {state.error ? <p className="form-error">{state.error}</p> : null}
 
         <button type="submit" className="btn-primary" disabled={pending}>
-          {pending ? "処理中…" : "ログインして書く"}
+          {pending ? "処理中…" : "ログイン"}
         </button>
       </form>
-
-      <p className="auth-note">
-        個人用アプリです。アカウントの追加はアプリからはできません。
-      </p>
     </div>
   );
 }

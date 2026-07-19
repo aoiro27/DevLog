@@ -9,13 +9,6 @@ export function StreakPanel({ stats }: { stats: StreakStats }) {
           <span className="streak-number">{stats.current}</span>
           <span className="streak-unit">日</span>
         </p>
-        <p className="streak-status">
-          {stats.wroteToday
-            ? "今日はもう残した。あとは続けるだけ。"
-            : stats.current > 0
-              ? "今日まだ。1行でチェーンをつなごう。"
-              : "最初の1行から、チェーンが始まる。"}
-        </p>
       </div>
       <dl className="streak-side">
         <div>

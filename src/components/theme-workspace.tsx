@@ -87,8 +87,8 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
       </p>
       <h1 className="page-heading">{theme.title}</h1>
       <p className="page-sub">
-        {theme.status === "open" ? "調査中" : "完了"} · ノード{" "}
-        {countNodes(tree)} 件
+        {theme.status === "open" ? "調査中" : "完了"} · {countNodes(tree)}{" "}
+        ノード
       </p>
 
       <div className="theme-workspace">

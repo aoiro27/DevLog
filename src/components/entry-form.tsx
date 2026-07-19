@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import type { Entry } from "@/lib/types";
 
-const SOFT_LIMIT = 800;
 const HARD_LIMIT = 50000;
 
 type Props = {
@@ -21,8 +20,6 @@ export function EntryForm({ onCreated }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-
-  const overSoft = body.length > SOFT_LIMIT;
 
   return (
     <form
@@ -82,11 +79,7 @@ export function EntryForm({ onCreated }: Props) {
           setTitle("");
           setTags("");
           setBody("");
-          setSuccess(
-            nextBody.length <= SOFT_LIMIT
-              ? "残しました。また明日も小さく。"
-              : "残しました。長くても大丈夫、続ければ資産になる。",
-          );
+          setSuccess("保存しました。");
           onCreated?.(data as Entry);
         });
       }}
@@ -110,7 +103,7 @@ export function EntryForm({ onCreated }: Props) {
           maxLength={200}
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-          placeholder="例: React, Hooks, 詰まったこと"
+          placeholder="例: React, Hooks"
         />
       </label>
 
@@ -120,16 +113,15 @@ export function EntryForm({ onCreated }: Props) {
       </div>
 
       <div className="entry-meta">
-        <span className={overSoft ? "char-count is-soft" : "char-count"}>
+        <span className="char-count">
           {body.length} / {HARD_LIMIT}
-          {overSoft ? " · 長くてもOK" : " · 目安は短めで十分"}
         </span>
         <button
           type="submit"
           className="btn-primary"
           disabled={pending || !title.trim() || !body.trim()}
         >
-          {pending ? "保存中…" : "今日の分を残す"}
+          {pending ? "保存中…" : "保存"}
         </button>
       </div>
 
