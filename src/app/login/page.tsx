@@ -8,8 +8,8 @@ export default function LoginPage() {
         <Link href="/" className="brand-mark">
           DevLog
         </Link>
-        <h1>続くための入り口</h1>
-        <p>アカウントを作って、今日の1行から始めましょう。</p>
+        <h1>ログイン</h1>
+        <p>戻ってきたら、続きの1行を残しましょう。</p>
         <AuthForm />
       </div>
     </main>

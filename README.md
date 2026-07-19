@@ -6,7 +6,7 @@
 
 ## できること
 
-- メール／パスワードでの認証（Supabase Auth）
+- メール／パスワードでのログイン（**新規登録はアプリから不可・一人用**）
 - 今日の学びを **Markdown** で投稿（画像のペースト／ドロップ対応）
 - タイトル・タグ付きで記録
 - タイトル / 本文 / タグでの検索・タグ絞り込み
@@ -34,7 +34,9 @@
    - `supabase/migrations/20260719000001_markdown_storage.sql`
    - `supabase/migrations/20260719000002_search.sql`
 3. **Project Settings → API** から URL と `anon` key を控える
-4. （個人利用向け）**Authentication → Providers → Email** で Confirm email をオフにすると、登録直後にログインできます
+4. **Authentication → Users → Add user** で自分のアカウントだけ作る（メール＋パスワード）
+5. **Authentication → Providers → Email** で **Enable sign ups をオフ**にする（公開登録を禁止）
+6. Confirm email は個人利用ならオフでOK
 
 ### 2. アプリ
 

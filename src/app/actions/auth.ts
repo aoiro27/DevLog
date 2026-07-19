@@ -8,34 +8,6 @@ export type ActionState = {
   success?: string;
 };
 
-export async function signUp(
-  _prev: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!email || password.length < 6) {
-    return { error: "メールアドレスと6文字以上のパスワードが必要です。" };
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({ email, password });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  if (!data.session) {
-    return {
-      success:
-        "確認メールを送りました。メール内のリンクを開いてからログインしてください。",
-    };
-  }
-
-  redirect("/today");
-}
-
 export async function signIn(
   _prev: ActionState,
   formData: FormData,

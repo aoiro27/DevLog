@@ -14,9 +14,6 @@ export default function HomePage() {
           </p>
           <div className="cta-row">
             <Link href="/login" className="btn-primary">
-              はじめる
-            </Link>
-            <Link href="/login" className="btn-secondary">
               ログイン
             </Link>
           </div>
