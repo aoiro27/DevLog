@@ -1,25 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ThemeNodeTree } from "@/lib/types";
 
 type Props = {
-  themeId: string;
   tree: ThemeNodeTree[];
   selectedId?: string;
+  onSelect: (id: string) => void;
 };
 
 function TreeItem({
   node,
-  themeId,
   selectedId,
   depth,
+  onSelect,
 }: {
   node: ThemeNodeTree;
-  themeId: string;
   selectedId?: string;
   depth: number;
+  onSelect: (id: string) => void;
 }) {
   const [open, setOpen] = useState(true);
   const hasChildren = node.children.length > 0;
@@ -45,12 +44,13 @@ function TreeItem({
             ·
           </span>
         )}
-        <Link
-          href={`/themes/${themeId}?node=${node.id}`}
+        <button
+          type="button"
           className="tree-link"
+          onClick={() => onSelect(node.id)}
         >
           {node.title}
-        </Link>
+        </button>
       </div>
       {hasChildren && open ? (
         <ul className="tree-children">
@@ -58,9 +58,9 @@ function TreeItem({
             <TreeItem
               key={child.id}
               node={child}
-              themeId={themeId}
               selectedId={selectedId}
               depth={depth + 1}
+              onSelect={onSelect}
             />
           ))}
         </ul>
@@ -69,7 +69,7 @@ function TreeItem({
   );
 }
 
-export function ThemeTreeNav({ themeId, tree, selectedId }: Props) {
+export function ThemeTreeNav({ tree, selectedId, onSelect }: Props) {
   const empty = useMemo(() => tree.length === 0, [tree]);
 
   if (empty) {
@@ -86,9 +86,9 @@ export function ThemeTreeNav({ themeId, tree, selectedId }: Props) {
         <TreeItem
           key={node.id}
           node={node}
-          themeId={themeId}
           selectedId={selectedId}
           depth={0}
+          onSelect={onSelect}
         />
       ))}
     </ul>

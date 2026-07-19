@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { EntryList } from "@/components/entry-list";
 import { MonthHeatmap } from "@/components/month-heatmap";
 import { SearchPanel } from "@/components/search-panel";
@@ -8,71 +9,133 @@ import { StreakPanel } from "@/components/streak-panel";
 import { todayInTokyo } from "@/lib/date";
 import { calcStreak } from "@/lib/streak";
 import { collectTags } from "@/lib/tags";
+import { createClient } from "@/lib/supabase/client";
 import type { Entry } from "@/lib/types";
 
-type Props = {
-  initialEntries: Entry[];
-  allDates: string[];
-  allTagsEntries: Pick<Entry, "tags">[];
-  q: string;
-  tag: string;
-  isFiltering: boolean;
-};
+type EntryRow = Omit<Entry, "body"> & { body?: string };
 
-export function LogJournal({
-  initialEntries,
-  allDates,
-  allTagsEntries,
-  q,
-  tag,
-  isFiltering,
-}: Props) {
-  const [entries, setEntries] = useState(initialEntries);
+export function LogJournal() {
+  const searchParams = useSearchParams();
+  const q = (searchParams.get("q") ?? "").trim();
+  const tag = (searchParams.get("tag") ?? "").trim();
+  const isFiltering = Boolean(q || tag);
 
-  const stats = useMemo(() => calcStreak(allDates), [allDates]);
+  const [allEntries, setAllEntries] = useState<EntryRow[]>([]);
+  const [entries, setEntries] = useState<EntryRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    let cancelled = false;
+
+    async function run() {
+      setLoading(true);
+
+      const { data: recent } = await supabase
+        .from("entries")
+        .select("id, user_id, title, tags, logged_on, created_at, updated_at")
+        .order("logged_on", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(500);
+
+      if (cancelled) return;
+      const base = (recent ?? []) as EntryRow[];
+      setAllEntries(base);
+
+      if (!q && !tag) {
+        setEntries(base);
+        setLoading(false);
+        return;
+      }
+
+      const { data: found, error } = await supabase.rpc("search_my_entries", {
+        search_query: q || null,
+        tag_filter: tag || null,
+      });
+
+      if (cancelled) return;
+
+      if (error) {
+        const needle = q.toLowerCase();
+        setEntries(
+          base.filter((entry) => {
+            const tagOk = !tag || (entry.tags ?? []).includes(tag);
+            if (!tagOk) return false;
+            if (!needle) return true;
+            const inTitle = entry.title?.toLowerCase().includes(needle);
+            const inTags = (entry.tags ?? []).some((t) =>
+              t.toLowerCase().includes(needle),
+            );
+            return inTitle || inTags;
+          }),
+        );
+      } else {
+        setEntries((found ?? []) as Entry[]);
+      }
+      setLoading(false);
+    }
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [q, tag]);
+
+  const dates = useMemo(
+    () => allEntries.map((e) => e.logged_on),
+    [allEntries],
+  );
+  const stats = useMemo(() => calcStreak(dates), [dates]);
   const today = todayInTokyo();
   const monthPrefix = today.slice(0, 7);
   const monthDates = useMemo(
-    () => [...new Set(allDates.filter((d) => d.startsWith(monthPrefix)))],
-    [allDates, monthPrefix],
+    () => [...new Set(dates.filter((d) => d.startsWith(monthPrefix)))],
+    [dates, monthPrefix],
   );
-  const popularTags = useMemo(
-    () => collectTags(allTagsEntries),
-    [allTagsEntries],
-  );
+  const popularTags = useMemo(() => collectTags(allEntries), [allEntries]);
 
   return (
-    <>
-      <StreakPanel stats={stats} />
+    <main>
+      <h1 className="page-heading">履歴</h1>
+      <p className="page-sub">タイトル・本文・タグから振り返る</p>
 
-      <div className="two-col" style={{ marginTop: "1.1rem" }}>
-        <div className="stack-col">
-          <SearchPanel
-            q={q}
-            tag={tag}
-            tags={popularTags}
-            resultCount={isFiltering ? entries.length : undefined}
-          />
-          <section className="panel">
-            <h2 className="section-title">
-              {isFiltering ? "検索結果" : "すべての記録"}
-            </h2>
-            <EntryList
-              entries={entries}
-              activeTag={tag || undefined}
-              emptyMessage={
-                isFiltering
-                  ? "条件に合う記録がありません。"
-                  : "まだ記録がありません。"
-              }
-              onDeleted={(id) =>
-                setEntries((prev) => prev.filter((e) => e.id !== id))
-              }
-            />
-          </section>
-        </div>
-        <MonthHeatmap activeDates={monthDates} />
-      </div>
-    </>
+      {loading ? (
+        <p className="empty-state">読み込み中…</p>
+      ) : (
+        <>
+          <StreakPanel stats={stats} />
+
+          <div className="two-col" style={{ marginTop: "1.1rem" }}>
+            <div className="stack-col">
+              <SearchPanel
+                q={q}
+                tag={tag}
+                tags={popularTags}
+                resultCount={isFiltering ? entries.length : undefined}
+              />
+              <section className="panel">
+                <h2 className="section-title">
+                  {isFiltering ? "検索結果" : "すべての記録"}
+                </h2>
+                <EntryList
+                  entries={entries as Entry[]}
+                  activeTag={tag || undefined}
+                  emptyMessage={
+                    isFiltering
+                      ? "条件に合う記録がありません。"
+                      : "まだ記録がありません。"
+                  }
+                  onDeleted={(id) => {
+                    setEntries((prev) => prev.filter((e) => e.id !== id));
+                    setAllEntries((prev) => prev.filter((e) => e.id !== id));
+                  }}
+                />
+              </section>
+            </div>
+            <MonthHeatmap activeDates={monthDates} />
+          </div>
+        </>
+      )}
+    </main>
   );
 }
