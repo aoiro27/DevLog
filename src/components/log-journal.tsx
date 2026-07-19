@@ -95,7 +95,7 @@ export function LogJournal() {
   const popularTags = useMemo(() => collectTags(allEntries), [allEntries]);
 
   return (
-    <main>
+    <main className="page-log">
       <h1 className="page-heading">履歴</h1>
 
       {loading ? (
@@ -104,35 +104,34 @@ export function LogJournal() {
         <>
           <StreakPanel stats={stats} />
 
-          <div className="two-col" style={{ marginTop: "1.1rem" }}>
-            <div className="stack-col">
-              <SearchPanel
-                q={q}
-                tag={tag}
-                tags={popularTags}
-                resultCount={isFiltering ? entries.length : undefined}
-              />
-              <section className="panel">
-                <h2 className="section-title">
-                  {isFiltering ? "検索結果" : "すべての記録"}
-                </h2>
-                <EntryList
-                  entries={entries as Entry[]}
-                  activeTag={tag || undefined}
-                  emptyMessage={
-                    isFiltering
-                      ? "条件に合う記録がありません。"
-                      : "まだ記録がありません。"
-                  }
-                  onDeleted={(id) => {
-                    setEntries((prev) => prev.filter((e) => e.id !== id));
-                    setAllEntries((prev) => prev.filter((e) => e.id !== id));
-                  }}
-                />
-              </section>
-            </div>
+          <div className="log-tools" style={{ marginTop: "1.1rem" }}>
+            <SearchPanel
+              q={q}
+              tag={tag}
+              tags={popularTags}
+              resultCount={isFiltering ? entries.length : undefined}
+            />
             <MonthHeatmap activeDates={monthDates} />
           </div>
+
+          <section className="panel panel-log-entries" style={{ marginTop: "1.1rem" }}>
+            <h2 className="section-title">
+              {isFiltering ? "検索結果" : "すべての記録"}
+            </h2>
+            <EntryList
+              entries={entries as Entry[]}
+              activeTag={tag || undefined}
+              emptyMessage={
+                isFiltering
+                  ? "条件に合う記録がありません。"
+                  : "まだ記録がありません。"
+              }
+              onDeleted={(id) => {
+                setEntries((prev) => prev.filter((e) => e.id !== id));
+                setAllEntries((prev) => prev.filter((e) => e.id !== id));
+              }}
+            />
+          </section>
         </>
       )}
     </main>

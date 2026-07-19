@@ -227,6 +227,34 @@ textarea {
   padding: 1.25rem 0 3.5rem;
 }
 
+.shell:has(.page-log) {
+  width: min(1120px, calc(100% - 2rem));
+}
+
+.log-tools {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 900px) {
+  .log-tools {
+    grid-template-columns: 1.3fr 0.9fr;
+    align-items: start;
+  }
+}
+
+.panel-log-entries {
+  width: 100%;
+}
+
+.panel-log-entries .entry-item {
+  padding: 1.15rem 1.25rem;
+}
+
+.panel-log-entries .markdown-body {
+  max-width: none;
+}
+
 .app-nav {
   display: flex;
   align-items: center;
