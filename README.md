@@ -10,6 +10,7 @@
 - 今日の学びを **Markdown** で投稿（画像のペースト／ドロップ対応）
 - タイトル・タグ付きで記録
 - タイトル / 本文 / タグでの検索・タグ絞り込み
+- **調査テーマ**を登録し、結果をツリーで残す
 - 連続日数・最長・累計日数
 - 今月の記録ヒートマップ
 - 日付ごとの履歴
@@ -33,6 +34,7 @@
    - `supabase/migrations/20260719000000_init.sql`
    - `supabase/migrations/20260719000001_markdown_storage.sql`
    - `supabase/migrations/20260719000002_search.sql`
+   - `supabase/migrations/20260719000003_themes.sql`
 3. **Project Settings → API** から URL と `anon` key を控える
 4. **Authentication → Users → Add user** で自分のアカウントだけ作る（メール＋パスワード）
 5. **Authentication → Providers → Email** で **Enable sign ups をオフ**にする（公開登録を禁止）

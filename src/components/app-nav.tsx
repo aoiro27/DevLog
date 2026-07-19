@@ -10,6 +10,7 @@ export function AppNav({ email }: { email?: string | null }) {
       <nav className="app-nav-links">
         <Link href="/today">今日</Link>
         <Link href="/log">履歴</Link>
+        <Link href="/themes">調査</Link>
       </nav>
       <div className="app-nav-end">
         {email ? <span className="nav-email">{email}</span> : null}
