@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Syne } from "next/font/google";
+import { Fredoka, Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-});
-
-const noto = Noto_Sans_JP({
-  variable: "--font-noto",
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const zenMaru = Zen_Maru_Gothic({
+  variable: "--font-zen",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${syne.variable} ${noto.variable} h-full`}>
+    <html lang="ja" className={`${fredoka.variable} ${zenMaru.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">{children}</body>
     </html>
   );

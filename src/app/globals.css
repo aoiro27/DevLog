@@ -1,21 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #15202b;
-  --ink-soft: #3a4a5a;
-  --paper: #eef3f7;
-  --paper-2: #f7fafc;
-  --mist: #c8d6e3;
-  --lagoon: #1a7a72;
-  --lagoon-deep: #0f5550;
-  --signal: #b86b2e;
-  --line: rgba(21, 32, 43, 0.12);
-  --danger: #a33b3b;
-  --success: #1a7a72;
-  --shadow: 0 24px 60px rgba(21, 32, 43, 0.12);
-  --radius: 18px;
-  --font-display: var(--font-syne), "Hiragino Sans", sans-serif;
-  --font-body: var(--font-noto), "Hiragino Sans", sans-serif;
+  --ink: #5a4450;
+  --ink-soft: #9a7f8c;
+  --paper: #fff7fa;
+  --paper-2: #ffffff;
+  --mist: #f3d5e0;
+  --lagoon: #e8919f;
+  --lagoon-deep: #d56b7c;
+  --mint: #8ec5b5;
+  --mint-deep: #6eab9a;
+  --signal: #e8a07a;
+  --line: rgba(213, 107, 124, 0.18);
+  --danger: #d46a7a;
+  --success: #6eab9a;
+  --shadow: 0 18px 40px rgba(213, 107, 124, 0.12);
+  --radius: 22px;
+  --font-display: var(--font-fredoka), "Hiragino Maru Gothic ProN", sans-serif;
+  --font-body: var(--font-zen), "Hiragino Maru Gothic ProN", sans-serif;
 }
 
 @theme inline {
@@ -38,9 +40,10 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(26, 122, 114, 0.18), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(184, 107, 46, 0.12), transparent 50%),
-    linear-gradient(180deg, #e6eef5 0%, var(--paper) 40%, #e8eef4 100%);
+    radial-gradient(900px 520px at 8% -5%, rgba(232, 145, 159, 0.28), transparent 55%),
+    radial-gradient(700px 420px at 100% 5%, rgba(142, 197, 181, 0.22), transparent 50%),
+    radial-gradient(600px 380px at 70% 100%, rgba(232, 160, 122, 0.14), transparent 45%),
+    linear-gradient(180deg, #fff9fb 0%, var(--paper) 45%, #fff4f7 100%);
   background-attachment: fixed;
 }
 
@@ -49,12 +52,13 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.35;
-  background-image:
-    linear-gradient(rgba(21, 32, 43, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(21, 32, 43, 0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 85%);
+  opacity: 0.45;
+  background-image: radial-gradient(
+    rgba(213, 107, 124, 0.14) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 80%);
 }
 
 a {
@@ -91,17 +95,29 @@ textarea {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(120deg, rgba(15, 85, 80, 0.88), rgba(21, 32, 43, 0.72)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath fill='none' stroke='rgba(255,255,255,0.08)' stroke-width='1' d='M0 40h160M0 80h160M0 120h160M40 0v160M80 0v160M120 0v160'/%3E%3C/svg%3E");
-  background-size: cover, 120px 120px;
-  animation: atmosphere-drift 18s ease-in-out infinite alternate;
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255, 210, 220, 0.9), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 20%, rgba(190, 230, 220, 0.75), transparent 50%),
+    radial-gradient(ellipse 60% 45% at 60% 80%, rgba(255, 220, 200, 0.7), transparent 50%),
+    linear-gradient(160deg, #ffe8ef 0%, #fff5f8 40%, #e8f6f2 100%);
+  animation: atmosphere-drift 16s ease-in-out infinite alternate;
+}
+
+.landing-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 70%, rgba(255, 255, 255, 0.55) 0 8%, transparent 9%),
+    radial-gradient(circle at 78% 55%, rgba(255, 255, 255, 0.45) 0 5%, transparent 6%),
+    radial-gradient(circle at 42% 25%, rgba(255, 255, 255, 0.4) 0 6%, transparent 7%);
+  animation: float-soft 10s ease-in-out infinite alternate;
 }
 
 .landing-copy {
   position: relative;
   z-index: 1;
   max-width: 40rem;
-  color: #f4f8fb;
+  color: var(--ink);
   animation: rise-in 0.9s ease both;
 }
 
@@ -110,9 +126,11 @@ textarea {
   margin: 0 0 1.25rem;
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 12vw, 7rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 0.9;
+  color: var(--lagoon-deep);
+  text-shadow: 0 8px 24px rgba(232, 145, 159, 0.25);
 }
 
 .landing-copy h1 {
@@ -120,16 +138,17 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 3.5vw, 2rem);
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: var(--ink);
 }
 
 .landing-copy p {
   margin: 0 0 1.75rem;
   max-width: 28rem;
-  color: rgba(244, 248, 251, 0.82);
+  color: var(--ink-soft);
   font-size: 1.05rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .cta-row {
@@ -155,49 +174,51 @@ textarea {
 
 .btn-primary {
   min-height: 2.85rem;
-  padding: 0.7rem 1.25rem;
-  border-radius: 999px;
-  background: var(--lagoon);
-  color: #f7fffe;
-  font-weight: 600;
+  padding: 0.7rem 1.35rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f0a3b0, var(--lagoon-deep));
+  color: #fffafb;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(213, 107, 124, 0.28);
 }
 
 .btn-primary:hover {
-  background: var(--lagoon-deep);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(213, 107, 124, 0.34);
 }
 
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .btn-secondary {
   min-height: 2.85rem;
-  padding: 0.7rem 1.25rem;
-  border-radius: 999px;
-  border: 1px solid rgba(244, 248, 251, 0.35);
-  background: transparent;
-  color: #f4f8fb;
-  font-weight: 600;
+  padding: 0.7rem 1.35rem;
+  border-radius: 16px;
+  border: 1.5px solid rgba(213, 107, 124, 0.35);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--lagoon-deep);
+  font-weight: 700;
 }
 
 .btn-secondary:hover {
-  background: rgba(244, 248, 251, 0.08);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .btn-ghost {
   padding: 0.35rem 0.55rem;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   color: var(--ink-soft);
   font-size: 0.85rem;
 }
 
 .btn-ghost:hover {
-  background: rgba(21, 32, 43, 0.06);
-  color: var(--ink);
+  background: rgba(232, 145, 159, 0.12);
+  color: var(--lagoon-deep);
 }
 
 .shell {
@@ -211,26 +232,40 @@ textarea {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.75rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
 }
 
 .brand-mark {
   font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--lagoon-deep);
 }
 
 .app-nav-links {
   display: flex;
-  gap: 0.85rem;
-  margin-left: 0.5rem;
-  font-size: 0.95rem;
+  gap: 0.35rem;
+  margin-left: 0.25rem;
+  font-size: 0.92rem;
   color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.app-nav-links a {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .app-nav-links a:hover {
-  color: var(--ink);
+  background: rgba(232, 145, 159, 0.14);
+  color: var(--lagoon-deep);
 }
 
 .app-nav-end {
@@ -259,9 +294,10 @@ textarea {
 .page-heading {
   margin: 0 0 0.35rem;
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-size: clamp(1.7rem, 3.2vw, 2.2rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+  color: var(--lagoon-deep);
 }
 
 .page-sub {
@@ -274,8 +310,8 @@ textarea {
   padding: 1.25rem 1.35rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(247, 250, 252, 0.88);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
 }
 
@@ -392,8 +428,8 @@ textarea {
 
 .field input:focus,
 .field textarea:focus {
-  border-color: rgba(26, 122, 114, 0.55);
-  box-shadow: 0 0 0 3px rgba(26, 122, 114, 0.15);
+  border-color: rgba(213, 107, 124, 0.45);
+  box-shadow: 0 0 0 3px rgba(213, 107, 124, 0.15);
 }
 
 .entry-meta {
@@ -439,9 +475,9 @@ textarea {
   gap: 1rem;
   padding: 1.25rem 1.35rem;
   border-radius: var(--radius);
-  border: 1px solid rgba(26, 122, 114, 0.2);
+  border: 1px solid rgba(232, 145, 159, 0.28);
   background:
-    linear-gradient(135deg, rgba(26, 122, 114, 0.12), rgba(247, 250, 252, 0.9));
+    linear-gradient(135deg, rgba(255, 214, 224, 0.65), rgba(255, 255, 255, 0.92));
   box-shadow: var(--shadow);
 }
 
@@ -537,9 +573,9 @@ textarea {
 
 .entry-item {
   padding: 0.95rem 1rem;
-  border-left: 3px solid var(--lagoon);
-  border-radius: 0 12px 12px 0;
-  background: rgba(255, 255, 255, 0.72);
+  border-left: 4px solid var(--lagoon);
+  border-radius: 0 18px 18px 0;
+  background: rgba(255, 255, 255, 0.78);
 }
 
 .entry-item-head {
@@ -561,11 +597,12 @@ textarea {
 
 .topic-tag {
   display: inline-flex;
-  padding: 0.15rem 0.5rem;
-  border-radius: 6px;
-  background: rgba(26, 122, 114, 0.12);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(232, 145, 159, 0.16);
   color: var(--lagoon-deep);
   font-weight: 600;
+  font-size: 0.82rem;
 }
 
 .entry-body {
@@ -608,7 +645,7 @@ textarea {
 }
 
 .heat-cell.is-today {
-  outline: 2px solid rgba(184, 107, 46, 0.7);
+  outline: 2px solid rgba(232, 160, 122, 0.8);
   outline-offset: 1px;
 }
 
@@ -711,7 +748,7 @@ textarea {
 }
 
 a.topic-tag:hover {
-  background: rgba(26, 122, 114, 0.22);
+  background: rgba(232, 145, 159, 0.22);
 }
 
 /* ——— Markdown editor ——— */
@@ -733,8 +770,8 @@ a.topic-tag:hover {
   grid-template-columns: 1fr 1fr;
   gap: 0.25rem;
   padding: 0.2rem;
-  border-radius: 999px;
-  background: rgba(21, 32, 43, 0.06);
+  border-radius: 14px;
+  background: rgba(232, 145, 159, 0.12);
 }
 
 .md-tabs button {
@@ -769,7 +806,7 @@ a.topic-tag:hover {
 
 .md-upload-btn:hover {
   color: var(--ink);
-  border-color: rgba(26, 122, 114, 0.4);
+  border-color: rgba(213, 107, 124, 0.4);
 }
 
 .md-textarea,
@@ -792,8 +829,8 @@ a.topic-tag:hover {
 }
 
 .md-textarea:focus {
-  border-color: rgba(26, 122, 114, 0.55);
-  box-shadow: 0 0 0 3px rgba(26, 122, 114, 0.15);
+  border-color: rgba(213, 107, 124, 0.45);
+  box-shadow: 0 0 0 3px rgba(213, 107, 124, 0.15);
 }
 
 .md-preview-pane {
@@ -869,7 +906,8 @@ a.topic-tag:hover {
 
 .markdown-body blockquote {
   padding: 0.15rem 0 0.15rem 0.9rem;
-  border-left: 3px solid var(--lagoon);
+  border-left: 4px solid var(--lagoon);
+  border-radius: 0 18px 18px 0;
   color: var(--ink-soft);
 }
 
@@ -885,7 +923,7 @@ a.topic-tag:hover {
   padding: 0.85rem 1rem;
   overflow-x: auto;
   border-radius: 10px;
-  background: #1a2430;
+  background: #5a4450;
   color: #e8eef4;
 }
 
@@ -1043,7 +1081,7 @@ a.topic-tag:hover {
 }
 
 .tree-row.is-selected {
-  background: rgba(26, 122, 114, 0.12);
+  background: rgba(232, 145, 159, 0.16);
 }
 
 .tree-toggle {
