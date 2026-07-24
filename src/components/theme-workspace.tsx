@@ -8,7 +8,11 @@ import {
   ThemeMetaForm,
 } from "@/components/theme-detail-forms";
 import { ThemeTreeNav } from "@/components/theme-tree-nav";
-import { buildThemeTree, countNodes } from "@/lib/theme-tree";
+import {
+  buildThemeTree,
+  countNodes,
+  reorderThemeNodeSiblings,
+} from "@/lib/theme-tree";
 import { createClient } from "@/lib/supabase/client";
 import type { Theme, ThemeNode } from "@/lib/types";
 
@@ -24,6 +28,7 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
   const [mode, setMode] = useState<Mode>({ type: "settings" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reorderError, setReorderError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -56,6 +61,45 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
   }, [load]);
 
   const tree = useMemo(() => buildThemeTree(nodes), [nodes]);
+
+  const handleReorder = useCallback(
+    async (activeId: string, overId: string) => {
+      const nextNodes = reorderThemeNodeSiblings(nodes, activeId, overId);
+      if (!nextNodes) {
+        return;
+      }
+
+      const updates = nextNodes.filter((node) => {
+        const prev = nodes.find((current) => current.id === node.id);
+        return prev && prev.sort_order !== node.sort_order;
+      });
+
+      if (updates.length === 0) {
+        return;
+      }
+
+      setReorderError(null);
+      setNodes(nextNodes);
+
+      const supabase = createClient();
+      const results = await Promise.all(
+        updates.map((node) =>
+          supabase
+            .from("theme_nodes")
+            .update({ sort_order: node.sort_order })
+            .eq("id", node.id)
+            .eq("theme_id", themeId),
+        ),
+      );
+
+      const failed = results.find((result) => result.error);
+      if (failed?.error) {
+        setReorderError(failed.error.message);
+        void load();
+      }
+    },
+    [nodes, themeId, load],
+  );
   const selected =
     mode.type === "node" || mode.type === "add-child"
       ? nodes.find((n) =>
@@ -116,10 +160,16 @@ export function ThemeWorkspace({ themeId }: { themeId: string }) {
               ) : null}
             </div>
           </div>
+          {reorderError ? (
+            <p className="form-error">{reorderError}</p>
+          ) : null}
           <ThemeTreeNav
             tree={tree}
             selectedId={mode.type === "node" ? mode.id : undefined}
             onSelect={(id) => setMode({ type: "node", id })}
+            onReorder={(activeId, overId) => {
+              void handleReorder(activeId, overId);
+            }}
           />
           <div className="theme-sidebar-foot">
             <button

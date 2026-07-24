@@ -1100,12 +1100,33 @@ a.topic-tag:hover {
   padding: 0;
 }
 
+.tree-item.is-dragging .tree-row {
+  opacity: 0.55;
+}
+
 .tree-row {
   display: flex;
   align-items: center;
   gap: 0.25rem;
   min-height: 2rem;
   border-radius: 8px;
+}
+
+.tree-drag-handle {
+  width: 1.2rem;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: grab;
+  font-size: 0.7rem;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  padding: 0.2rem 0;
+  touch-action: none;
+}
+
+.tree-drag-handle:active {
+  cursor: grabbing;
 }
 
 .tree-row.is-selected {
