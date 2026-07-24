@@ -207,7 +207,10 @@ export function MarkdownEditor({
           onPaste={onPaste}
           onDrop={onDrop}
           onDragOver={(e) => e.preventDefault()}
-          placeholder={placeholder ?? "本文"}
+          placeholder={
+            placeholder ??
+            "Markdown で書けます。図は ```mermaid 〜 ``` で挿入できます。"
+          }
           className="md-textarea"
         />
       ) : (

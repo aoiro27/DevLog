@@ -962,6 +962,38 @@ a.topic-tag:hover {
   font-size: 0.86rem;
 }
 
+.markdown-body .mermaid-diagram {
+  margin: 0.85em 0;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.markdown-body .mermaid-diagram.is-loading {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.markdown-body .mermaid-diagram.is-error {
+  background: rgba(180, 80, 80, 0.06);
+}
+
+.markdown-body .mermaid-diagram-error {
+  margin: 0 0 0.5rem;
+  color: #9a3b3b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.markdown-body .mermaid-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
 .markdown-body img {
   display: block;
   max-width: 100%;
